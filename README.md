@@ -1,8 +1,10 @@
 # 邻里充电运营平台
 
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/hvirgo0724-code/neighbor-charge-platform)
+
 面向多社区、多组织的社区充电运营工作台：统一管理社区、充电桩、预约、订单、设备事件、维修工单、审批和运营报表，并通过带风险门的 Agent 工作台把自然语言查询、故障归因和高风险动作串成可追溯的闭环。
 
-前端为原生 HTML / CSS / JavaScript（无构建步骤、无第三方 UI 库），后端为 FastAPI。默认使用零依赖的演示模式：首次启动自动写入种子数据，数据持久化到本地 JSON 文件，因此**不需要 MySQL、PostgreSQL 或 Redis 也能完整运行**，并可直接部署到 Netlify Functions。
+前端为原生 HTML / CSS / JavaScript（无构建步骤、无第三方 UI 库），后端为 FastAPI。默认使用零依赖的演示模式：首次启动自动写入种子数据，数据持久化到本地 JSON 文件，因此**不需要 MySQL、PostgreSQL 或 Redis 也能完整运行**。FastAPI 可直接运行在 Docker / Render，Netlify 预览则使用同 API 契约的 JavaScript 适配器。
 
 ## 快速开始
 
@@ -173,7 +175,27 @@ python -m compileall app
 
 覆盖：健康检查、登录 / 令牌、RBAC、租户隔离、用户订单隔离、预约冲突、预约校验、订单生命周期、设备事件幂等与升级、工单验收关闭、Agent 只读查询、Agent 退款审批、Agent 停机审批、自审批禁止、参数校验、报表与审计、存储故障 503。
 
-## 一键部署到 Netlify
+## 部署真实 FastAPI（Render）
+
+Netlify 不能运行 FastAPI。要部署**真正的 FastAPI 后端**，仓库已经准备好 Render Blueprint（`render.yaml` + `Dockerfile`），推荐使用 Render：
+
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/hvirgo0724-code/neighbor-charge-platform)
+
+1. 点击上方 **Deploy to Render** 按钮。
+2. 登录 Render（可用 GitHub 账号），确认 `neighbor-charge-api` Web Service。
+3. Render 会基于 `Dockerfile` 构建镜像，启动 `uvicorn`，健康检查为 `/api/health`。
+4. 部署完成后访问 Render 提供的 `https://<service>.onrender.com`，FastAPI 会同时提供 API 和 `static/` 前端。
+
+也可以在 Render Dashboard 中手动操作：**New → Blueprint → 选择 GitHub 仓库 `hvirgo0724-code/neighbor-charge-platform`**，Render 会自动读取 `render.yaml`。
+
+说明：
+
+- 免费 Web Service 的文件系统是临时的，`DATA_FILE=/tmp/neighbor-charge-store.json`，实例重启会回到种子数据；需要持久化时给服务挂载 Render Disk 并把 `DATA_FILE` 指向挂载目录，或接入 PostgreSQL。
+- Render 会自动注入 `PORT` 和随机的 `JWT_SECRET`；不需要手动配置密钥。
+- 如果服务暂时没有访问，Render 免费实例会休眠，首次请求需要几十秒唤醒。
+- 同样的 Dockerfile 也可以部署到 Fly.io、Railway、Koyeb 或任意 VPS。
+
+## 一键部署到 Netlify（前端预览）
 
 Netlify Functions 官方文档只提供 JavaScript / TypeScript 与 Go 运行时，不能直接运行 FastAPI。因此仓库采用双实现：
 

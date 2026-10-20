@@ -1,0 +1,27 @@
+[build]
+  command = "python scripts/export_seed.py"
+  publish = "static"
+  functions = "netlify/functions"
+
+[build.environment]
+  PYTHON_VERSION = "3.11"
+  NODE_VERSION = "20"
+
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
+
+# Netlify Functions document JavaScript/TypeScript and Go, not Python. The
+# FastAPI backend remains the source of truth for local/Docker deployments;
+# the Netlify deployment uses an in-memory JavaScript adapter with the same
+# seed and API contract (see netlify/functions/api/api.mjs).
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/api/:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

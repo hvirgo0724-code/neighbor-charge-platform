@@ -1,0 +1,25 @@
+# local environment
+.env
+.env.local
+
+# demo persistence
+.data/
+
+# local test/build helpers
+.deps/
+.wheels/
+.tools/
+.npm-cache/
+.netlify/
+.vercel/
+.pytest_cache/
+pytest-cache-files-*/
+__pycache__/
+*.py[cod]
+netlify/functions/api/_app/
+
+# editors / OS
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db

@@ -1,0 +1,17 @@
+services:
+  app:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      DEMO_MODE: "true"
+      JWT_SECRET: "replace-with-a-long-random-string"
+      DATA_FILE: "/data/store.json"
+      PERSIST: "true"
+      LOG_LEVEL: "INFO"
+    volumes:
+      - neighbor_data:/data
+    restart: unless-stopped
+
+volumes:
+  neighbor_data:

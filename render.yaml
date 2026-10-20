@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: neighbor-charge-api
+    runtime: docker
+    plan: free
+    region: singapore
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /api/health
+    envVars:
+      - key: DEMO_MODE
+        value: "true"
+      - key: JWT_SECRET
+        generateValue: true
+      - key: DATA_FILE
+        value: /tmp/neighbor-charge-store.json
+      - key: PERSIST
+        value: "true"
+      - key: LOG_LEVEL
+        value: INFO
